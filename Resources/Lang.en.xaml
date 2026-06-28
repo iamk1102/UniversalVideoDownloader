@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="Lang_DownloadConfig">DOWNLOAD CONFIGURATION</sys:String>
+    <sys:String x:Key="Lang_VideoUrl">Video URL</sys:String>
+    <sys:String x:Key="Lang_Quality">Download Quality</sys:String>
+    <sys:String x:Key="Lang_CookiesSource">Bypass Cloudflare / Cookies Source</sys:String>
+    <sys:String x:Key="Lang_DestinationPath">Destination Path</sys:String>
+    <sys:String x:Key="Lang_AnalyzeUrl">Analyze URL</sys:String>
+    <sys:String x:Key="Lang_DownloadVideo">Download Video</sys:String>
+    <sys:String x:Key="Lang_QueueManager">DOWNLOAD QUEUE MANAGER</sys:String>
+    <sys:String x:Key="Lang_AddQueue">Add to Queue</sys:String>
+    <sys:String x:Key="Lang_StartQueue">Start Queue</sys:String>
+    <sys:String x:Key="Lang_PauseQueue">Pause Queue</sys:String>
+    <sys:String x:Key="Lang_Settings">SETTINGS</sys:String>
+    <sys:String x:Key="Lang_History">DOWNLOAD HISTORY</sys:String>
+    <sys:String x:Key="Lang_About">ABOUT</sys:String>
+    <sys:String x:Key="Lang_Theme">Application Theme</sys:String>
+    <sys:String x:Key="Lang_Language">Application Language</sys:String>
+</ResourceDictionary>

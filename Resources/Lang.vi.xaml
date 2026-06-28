@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="Lang_DownloadConfig">CẤU HÌNH TẢI XUỐNG</sys:String>
+    <sys:String x:Key="Lang_VideoUrl">Đường dẫn Video (URL)</sys:String>
+    <sys:String x:Key="Lang_Quality">Chất lượng tải xuống</sys:String>
+    <sys:String x:Key="Lang_CookiesSource">Bỏ qua Cloudflare / Nguồn Cookie</sys:String>
+    <sys:String x:Key="Lang_DestinationPath">Thư mục lưu trữ</sys:String>
+    <sys:String x:Key="Lang_AnalyzeUrl">Phân tích URL</sys:String>
+    <sys:String x:Key="Lang_DownloadVideo">Tải xuống Video</sys:String>
+    <sys:String x:Key="Lang_QueueManager">QUẢN LÝ HÀNG ĐỢI TẢI XUỐNG</sys:String>
+    <sys:String x:Key="Lang_AddQueue">Thêm vào hàng đợi</sys:String>
+    <sys:String x:Key="Lang_StartQueue">Bắt đầu hàng đợi</sys:String>
+    <sys:String x:Key="Lang_PauseQueue">Tạm dừng hàng đợi</sys:String>
+    <sys:String x:Key="Lang_Settings">CÀI ĐẶT</sys:String>
+    <sys:String x:Key="Lang_History">LỊCH SỬ TẢI XUỐNG</sys:String>
+    <sys:String x:Key="Lang_About">GIỚI THIỆU</sys:String>
+    <sys:String x:Key="Lang_Theme">Giao diện ứng dụng</sys:String>
+    <sys:String x:Key="Lang_Language">Ngôn ngữ hiển thị</sys:String>
+</ResourceDictionary>

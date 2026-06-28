@@ -360,6 +360,113 @@ public class YtDlpService
         }
     }
 
+    public async Task DownloadVideoAsync(
+        QueueItem item,
+        int threads = 8,
+        Action<double, string, string>? onProgressReport = null,
+        CancellationToken cancellationToken = default)
+    {
+        await EnsureYtDlpInstalledAsync();
+
+        var destinationDir = item.SavePath;
+        if (string.IsNullOrEmpty(destinationDir))
+        {
+            destinationDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Downloads");
+        }
+
+        if (!Directory.Exists(destinationDir))
+        {
+            Directory.CreateDirectory(destinationDir);
+        }
+
+        var sb = new StringBuilder();
+        
+        // Base config
+        sb.Append($"--impersonate chrome ");
+        sb.Append($"-N {threads} ");
+        sb.Append($"--continue --no-overwrites ");
+
+        sb.Append($"-o \"{Path.Combine(destinationDir, "%(title)s.%(ext)s")}\" ");
+
+        // Format selection
+        if (item.IsAudioOnly)
+        {
+            sb.Append($"-f \"ba/b\" -x --audio-format mp3 ");
+        }
+        else
+        {
+            if (string.IsNullOrEmpty(item.Quality) || item.Quality.Equals("Best", StringComparison.OrdinalIgnoreCase))
+            {
+                sb.Append($"-f \"bv*+ba/b\" --merge-output-format mp4 ");
+            }
+            else
+            {
+                sb.Append($"-f \"bv*[height<={item.Quality}]+ba/b[height<={item.Quality}]\" --merge-output-format mp4 ");
+            }
+        }
+
+        // Browser cookies
+        if (!string.IsNullOrEmpty(item.Browser) && !item.Browser.Equals("None", StringComparison.OrdinalIgnoreCase))
+        {
+            sb.Append($"--cookies-from-browser {item.Browser.ToLower()} ");
+        }
+
+        // Subtitles
+        if (item.WriteSubtitles)
+        {
+            sb.Append($"--write-subs --embed-subs ");
+        }
+
+        // Aria2 download acceleration
+        if (item.UseAria2 && IsAria2Installed)
+        {
+            sb.Append($"--downloader aria2c --downloader-args \"aria2c:-x{threads} -s{threads} -k1M\" ");
+        }
+
+        sb.Append($"\"{item.Url}\"");
+
+        var progressRegex = new Regex(@"\[download\]\s+([0-9.]+)%\s+of\s+\S+\s+at\s+(\S+)\s+ETA\s+(\S+)", RegexOptions.Compiled);
+
+        var result = await ProcessHelper.RunProcessAsync(
+            _ytDlpPath,
+            sb.ToString(),
+            onOutputReceived: line =>
+            {
+                item.AppendLogLine(line);
+
+                var match = progressRegex.Match(line);
+                if (match.Success)
+                {
+                    if (double.TryParse(match.Groups[1].Value, out var percent))
+                    {
+                        var speed = match.Groups[2].Value;
+                        var eta = match.Groups[3].Value;
+                        
+                        item.Progress = percent;
+                        item.Speed = speed;
+                        item.ETA = eta;
+
+                        onProgressReport?.Invoke(percent, speed, eta);
+                    }
+                }
+            },
+            onErrorReceived: line =>
+            {
+                item.AppendLogLine($"[ERROR] {line}");
+            },
+            cancellationToken: cancellationToken);
+
+        if (result.IsCanceled)
+        {
+            throw new OperationCanceledException("Download canceled by user.");
+        }
+
+        if (result.ExitCode != 0)
+        {
+            throw new Exception($"Download failed. Error: {result.Error}");
+        }
+    }
+
     private string FormatDuration(double seconds)
     {
         if (seconds <= 0) return "Unknown";
