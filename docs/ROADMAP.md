@@ -29,7 +29,7 @@
 
 ---
 
-## Version 1.0.0 (Stable Release) - IN PROGRESS
-- [ ] Installer package creation
-- [ ] Auto-Updater module
-- [ ] Stable release on GitHub
+## Version 1.0.0 (Stable Release) - COMPLETED
+- [x] Installer package creation (Install.ps1 custom shortcut setup & registry uninstall configuration)
+- [x] Auto-Updater module (queries GitHub Release API and runs a background replacement .bat script)
+- [x] Stable release on GitHub (all code compiled and published in portable self-contained executable format)
