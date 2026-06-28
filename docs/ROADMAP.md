@@ -3,35 +3,35 @@
 ## Version 0.1.0
 
 ### UI
-- [ ] Main Window
-- [ ] Navigation Panel
-- [ ] URL TextBox
-- [ ] Analyze Button
-- [ ] Download Button
-- [ ] Status Bar
+- [x] Main Window
+- [x] Navigation Panel
+- [x] URL TextBox
+- [x] Analyze Button
+- [x] Download Button
+- [x] Status Bar
 
 ### Backend
-- [ ] Integrate yt-dlp
-- [ ] Analyze URL
-- [ ] Download Video
+- [x] Integrate yt-dlp
+- [x] Analyze URL
+- [x] Download Video
 
 ---
 
 ## Version 0.2.0
 
 - [ ] Download Queue
-- [ ] Progress Bar
-- [ ] ETA
-- [ ] Playlist Download
+- [x] Progress Bar
+- [x] ETA
+- [x] Playlist Download
 
 ---
 
 ## Version 0.3.0
 
-- [ ] History
-- [ ] Settings
-- [ ] Theme
-- [ ] FFmpeg Integration
+- [x] History
+- [x] Settings
+- [ ] Theme (Dynamic Selection)
+- [x] FFmpeg Integration
 
 ---
 
