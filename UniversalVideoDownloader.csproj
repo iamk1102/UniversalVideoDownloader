@@ -7,6 +7,19 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
     <UseWindowsForms>true</UseWindowsForms>
+
+    <!-- Assembly / Copyright Metadata -->
+    <AssemblyTitle>Universal Video Downloader</AssemblyTitle>
+    <Product>Universal Video Downloader</Product>
+    <Description>A modern, high-performance download manager powered by yt-dlp, FFmpeg, and aria2. Developed by Kaka91.</Description>
+    <Company>Kaka91</Company>
+    <Authors>Kaka91</Authors>
+    <Copyright>Copyright © 2026 Kaka91. All rights reserved.</Copyright>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/iamk1102/UniversalVideoDownloader</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

@@ -27,6 +27,18 @@ Run the PowerShell installer to automatically set up the application, create sho
 
 Developed by **Kaka91** using C#, WPF (.NET 10), and CommunityToolkit.Mvvm.
 
-## License
+## License & Copyright
 
-This project is licensed under the MIT License.
+Copyright © 2026 **Kaka91**. All rights reserved.
+
+This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and distribute this software **provided that**:
+
+- The original **copyright notice** and license text are retained in all copies or substantial portions of the software.
+- Proper **attribution** to the original author (**Kaka91**) is given in any derivative work.
+- This software **may not be rebranded, republished, or claimed** as another person's original work.
+
+Any unauthorized removal of copyright notices, license headers, or author attribution constitutes a violation of the license terms.
+
+---
+
+> **Made with ❤️ by Kaka91** — [github.com/iamk1102](https://github.com/iamk1102)
