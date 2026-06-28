@@ -1055,7 +1055,7 @@
                                            MaxWidth="450"
                                            Margin="0,0,0,16"/>
 
-                                <TextBlock Text="Developed with C#, WPF (.NET 10), and CommunityToolkit.Mvvm" 
+                                <TextBlock Text="Developed by KAKA91 using C#, WPF (.NET 10), and CommunityToolkit.Mvvm" 
                                            Foreground="{DynamicResource TextMutedForeground}" 
                                            FontSize="12" 
                                            HorizontalAlignment="Center" 
