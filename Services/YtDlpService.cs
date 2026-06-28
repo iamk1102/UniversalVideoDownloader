@@ -258,6 +258,7 @@ public class YtDlpService
         bool writeSubtitles = false,
         bool useAria2 = true,
         int threads = 8,
+        string speedLimit = "Unlimited",
         Action<double, string, string>? onProgressReport = null,
         CancellationToken cancellationToken = default)
     {
@@ -327,6 +328,13 @@ public class YtDlpService
             sb.Append($"--downloader aria2c --downloader-args \"aria2c:-x{threads} -s{threads} -k1M\" ");
         }
 
+        // Speed Limit
+        if (!string.IsNullOrEmpty(speedLimit) && !speedLimit.Equals("Unlimited", StringComparison.OrdinalIgnoreCase))
+        {
+            var limitArg = speedLimit.Replace(" KB/s", "K").Replace(" MB/s", "M").Replace(" ", "");
+            sb.Append($"--limit-rate {limitArg} ");
+        }
+
         sb.Append($"\"{url}\"");
 
         var progressRegex = new Regex(@"\[download\]\s+([0-9.]+)%\s+of\s+\S+\s+at\s+(\S+)\s+ETA\s+(\S+)", RegexOptions.Compiled);
@@ -363,6 +371,7 @@ public class YtDlpService
     public async Task DownloadVideoAsync(
         QueueItem item,
         int threads = 8,
+        string speedLimit = "Unlimited",
         Action<double, string, string>? onProgressReport = null,
         CancellationToken cancellationToken = default)
     {
@@ -421,6 +430,13 @@ public class YtDlpService
         if (item.UseAria2 && IsAria2Installed)
         {
             sb.Append($"--downloader aria2c --downloader-args \"aria2c:-x{threads} -s{threads} -k1M\" ");
+        }
+
+        // Speed Limit
+        if (!string.IsNullOrEmpty(speedLimit) && !speedLimit.Equals("Unlimited", StringComparison.OrdinalIgnoreCase))
+        {
+            var limitArg = speedLimit.Replace(" KB/s", "K").Replace(" MB/s", "M").Replace(" ", "");
+            sb.Append($"--limit-rate {limitArg} ");
         }
 
         sb.Append($"\"{item.Url}\"");

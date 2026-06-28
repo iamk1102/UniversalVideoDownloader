@@ -27,6 +27,7 @@ public partial class MainViewModel : ObservableObject
     private string _lastClipboardText = "";
     private bool _isProcessingQueue;
     private readonly object _queueLock = new();
+    private readonly System.Collections.Generic.List<HistoryItem> _allHistoryItems = new();
 
     [DllImport("powrprof.dll", SetLastError = true)]
     private static extern bool SetSuspendState(bool hibernate, bool forceCritical, bool disableWakeEvent);
@@ -61,13 +62,15 @@ public partial class MainViewModel : ObservableObject
         SelectedSchedulerAction = _settings.SchedulerAction;
         SelectedTheme = _settings.Theme;
         SelectedLanguage = _settings.Language;
+        SelectedSpeedLimit = _settings.SpeedLimit ?? "Unlimited";
 
         // Load History
         var history = await _historyService.LoadHistoryAsync();
         foreach (var item in history.OrderByDescending(h => h.DownloadDate))
         {
-            HistoryItems.Add(item);
+            _allHistoryItems.Add(item);
         }
+        FilterHistory();
 
         UpdateDependencyStatus();
 
@@ -164,6 +167,12 @@ public partial class MainViewModel : ObservableObject
 
     [ObservableProperty]
     private string selectedLanguage = "en"; // en, vi
+
+    [ObservableProperty]
+    private string selectedSpeedLimit = "Unlimited";
+
+    [ObservableProperty]
+    private string historySearchQuery = "";
 
     // --- Dependency Status ---
     [ObservableProperty]
@@ -316,6 +325,7 @@ public partial class MainViewModel : ObservableObject
                 WriteSubtitles,
                 UseAria2,
                 Threads,
+                SelectedSpeedLimit,
                 (percent, speed, etaValue) =>
                 {
                     ProgressPercentage = percent;
@@ -356,8 +366,9 @@ public partial class MainViewModel : ObservableObject
                 FileSize = sizeStr
             };
 
-            HistoryItems.Insert(0, historyItem);
-            await _historyService.SaveHistoryAsync(HistoryItems.ToList());
+            _allHistoryItems.Insert(0, historyItem);
+            FilterHistory();
+            await _historyService.SaveHistoryAsync(_allHistoryItems);
         }
         catch (OperationCanceledException)
         {
@@ -381,8 +392,9 @@ public partial class MainViewModel : ObservableObject
                 FileSize = "N/A"
             };
 
-            HistoryItems.Insert(0, historyItem);
-            await _historyService.SaveHistoryAsync(HistoryItems.ToList());
+            _allHistoryItems.Insert(0, historyItem);
+            FilterHistory();
+            await _historyService.SaveHistoryAsync(_allHistoryItems);
         }
         finally
         {
@@ -417,8 +429,9 @@ public partial class MainViewModel : ObservableObject
     [RelayCommand]
     private async Task ClearHistory()
     {
-        HistoryItems.Clear();
-        await _historyService.SaveHistoryAsync(new System.Collections.Generic.List<HistoryItem>());
+        _allHistoryItems.Clear();
+        FilterHistory();
+        await _historyService.SaveHistoryAsync(_allHistoryItems);
     }
 
     [RelayCommand]
@@ -487,6 +500,7 @@ public partial class MainViewModel : ObservableObject
         _settings.SchedulerAction = SelectedSchedulerAction;
         _settings.Theme = SelectedTheme;
         _settings.Language = SelectedLanguage;
+        _settings.SpeedLimit = SelectedSpeedLimit;
 
         _ = _historyService.SaveSettingsAsync(_settings);
     }
@@ -706,6 +720,7 @@ public partial class MainViewModel : ObservableObject
             await _ytDlpService.DownloadVideoAsync(
                 item,
                 Threads,
+                SelectedSpeedLimit,
                 null,
                 token);
 
@@ -740,8 +755,12 @@ public partial class MainViewModel : ObservableObject
                 FileSize = sizeStr
             };
 
-            App.Current.Dispatcher.Invoke(() => HistoryItems.Insert(0, historyItem));
-            await _historyService.SaveHistoryAsync(HistoryItems.ToList());
+            lock (_allHistoryItems)
+            {
+                _allHistoryItems.Insert(0, historyItem);
+            }
+            FilterHistory();
+            await _historyService.SaveHistoryAsync(_allHistoryItems);
 
             // Fire Custom Toast notification (Sprint 3)
             TriggerNotification(item.Title, true);
@@ -772,8 +791,12 @@ public partial class MainViewModel : ObservableObject
                 FileSize = "N/A"
             };
 
-            App.Current.Dispatcher.Invoke(() => HistoryItems.Insert(0, historyItem));
-            await _historyService.SaveHistoryAsync(HistoryItems.ToList());
+            lock (_allHistoryItems)
+            {
+                _allHistoryItems.Insert(0, historyItem);
+            }
+            FilterHistory();
+            await _historyService.SaveHistoryAsync(_allHistoryItems);
 
             // Fire Custom Toast notification (Sprint 3)
             TriggerNotification(item.Title, false);
@@ -946,5 +969,34 @@ public partial class MainViewModel : ObservableObject
             dictionaries.Add(new ResourceDictionary { Source = langUri });
         }
         catch { }
+    }
+
+    partial void OnHistorySearchQueryChanged(string value)
+    {
+        FilterHistory();
+    }
+
+    private void FilterHistory()
+    {
+        if (HistoryItems == null) return;
+        
+        App.Current?.Dispatcher?.Invoke(() =>
+        {
+            HistoryItems.Clear();
+            var query = string.IsNullOrWhiteSpace(HistorySearchQuery) ? "" : HistorySearchQuery.ToLower().Trim();
+            lock (_allHistoryItems)
+            {
+                foreach (var item in _allHistoryItems)
+                {
+                    if (string.IsNullOrEmpty(query) || 
+                        (item.Title != null && item.Title.ToLower().Contains(query)) ||
+                        (item.Url != null && item.Url.ToLower().Contains(query)) ||
+                        (item.Website != null && item.Website.ToLower().Contains(query)))
+                    {
+                        HistoryItems.Add(item);
+                    }
+                }
+            }
+        });
     }
 }

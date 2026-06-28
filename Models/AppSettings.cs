@@ -15,4 +15,5 @@ public class AppSettings
     public string SchedulerAction { get; set; } = "None"; // None, Shutdown, Sleep
     public string Theme { get; set; } = "Dark"; // Dark, Light
     public string Language { get; set; } = "en"; // en, vi
+    public string SpeedLimit { get; set; } = "Unlimited";
 }
