@@ -999,4 +999,139 @@ public partial class MainViewModel : ObservableObject
             }
         });
     }
+
+    [ObservableProperty]
+    private string updateStatusText = "App is up to date";
+
+    [ObservableProperty]
+    private bool isUpdateAvailable;
+
+    private string _latestDownloadUrl = "";
+
+    [RelayCommand]
+    private async Task CheckForUpdates()
+    {
+        try
+        {
+            UpdateStatusText = "Checking for updates...";
+            using var client = new System.Net.Http.HttpClient();
+            client.DefaultRequestHeaders.Add("User-Agent", "UniversalVideoDownloader-Updater");
+            
+            var response = await client.GetAsync("https://api.github.com/repos/iamk1102/UniversalVideoDownloader/releases/latest");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                var matchTag = Regex.Match(json, @"""tag_name""\s*:\s*""([^""]+)""");
+                if (matchTag.Success)
+                {
+                    var latestVersion = matchTag.Groups[1].Value.Replace("v", "");
+                    var currentVersion = "1.0.0";
+                    
+                    if (IsNewerVersion(latestVersion, currentVersion))
+                    {
+                        var matchUrl = Regex.Match(json, @"""browser_download_url""\s*:\s*""([^""]+\.exe)""");
+                        if (matchUrl.Success)
+                        {
+                            _latestDownloadUrl = matchUrl.Groups[1].Value;
+                        }
+                        
+                        IsUpdateAvailable = true;
+                        UpdateStatusText = $"Version {latestVersion} available!";
+                        
+                        var result = MessageBox.Show(
+                            $"A new version (v{latestVersion}) of Universal Video Downloader is available!\nDo you want to download and install it now?",
+                            "Update Available",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Information);
+                            
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            await DownloadAndApplyUpdateAsync();
+                        }
+                    }
+                    else
+                    {
+                        IsUpdateAvailable = false;
+                        UpdateStatusText = "You are running the latest version.";
+                        MessageBox.Show("You are running the latest version (v1.0.0).", "Check for Updates", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            else
+            {
+                UpdateStatusText = "Check failed. Remote server unavailable.";
+                MessageBox.Show("Could not connect to GitHub API to check for updates.", "Update Check Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            UpdateStatusText = "Check failed. No internet connection.";
+            MessageBox.Show($"Could not check for updates. Error: {ex.Message}", "Update Check Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    private bool IsNewerVersion(string latest, string current)
+    {
+        try
+        {
+            var lVer = new Version(latest);
+            var cVer = new Version(current);
+            return lVer > cVer;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    private async Task DownloadAndApplyUpdateAsync()
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(_latestDownloadUrl))
+            {
+                MessageBox.Show("Could not resolve update download link.", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            UpdateStatusText = "Downloading update...";
+            var tempExePath = Path.Combine(Path.GetTempPath(), "UniversalVideoDownloader_Update.exe");
+            
+            using (var client = new System.Net.Http.HttpClient())
+            {
+                var bytes = await client.GetByteArrayAsync(_latestDownloadUrl);
+                await File.WriteAllBytesAsync(tempExePath, bytes);
+            }
+
+            var currentExe = Environment.ProcessPath;
+            if (string.IsNullOrEmpty(currentExe)) return;
+            
+            var batchPath = Path.Combine(Path.GetTempPath(), "uvd_update.bat");
+            var batchContent = $"""
+@echo off
+timeout /t 2 /nobreak > nul
+copy /y "{tempExePath}" "{currentExe}"
+start "" "{currentExe}"
+del "%~f0"
+""";
+            await File.WriteAllTextAsync(batchPath, batchContent);
+
+            MessageBox.Show("Update downloaded successfully! The application will restart to apply the update.", "Update Installed", MessageBoxButton.OK, MessageBoxImage.Information);
+            
+            var startInfo = new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Arguments = $"/c \"{batchPath}\"",
+                CreateNoWindow = true,
+                UseShellExecute = false
+            };
+            System.Diagnostics.Process.Start(startInfo);
+            
+            Application.Current.Shutdown();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Update failed: {ex.Message}", "Update Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
 }

@@ -224,7 +224,7 @@
                         </Border>
                         <TextBlock Text="UVD Manager" FontSize="18" FontWeight="Bold" Foreground="{DynamicResource TextForeground}" VerticalAlignment="Center"/>
                     </StackPanel>
-                    <TextBlock Text="v0.2.0 Beta" FontSize="11" Foreground="{DynamicResource TextMutedForeground}"/>
+                    <TextBlock Text="v1.0.0 Stable" FontSize="11" Foreground="{DynamicResource TextMutedForeground}"/>
                 </StackPanel>
 
                 <!-- Sidebar Buttons -->
@@ -1086,7 +1086,7 @@
                                 </Border>
                                 
                                 <TextBlock Text="Universal Video Downloader" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource TextForeground}" HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                                <TextBlock Text="Version 0.2.0 Beta" FontSize="14" Foreground="{DynamicResource TextMutedForeground}" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+                                <TextBlock Text="Version 1.0.0 Stable" FontSize="14" Foreground="{DynamicResource TextMutedForeground}" HorizontalAlignment="Center" Margin="0,0,0,24"/>
 
                                 <TextBlock Text="A lightweight, high-performance download manager leveraging the power of yt-dlp, FFmpeg, and aria2." 
                                            Foreground="{DynamicResource TextForeground}" 
@@ -1100,7 +1100,19 @@
                                            Foreground="{DynamicResource TextMutedForeground}" 
                                            FontSize="12" 
                                            HorizontalAlignment="Center" 
-                                           Margin="0,0,0,32"/>
+                                           Margin="0,0,0,20"/>
+
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,24">
+                                    <Button Style="{StaticResource SecondaryButton}" 
+                                            Content="Check for Updates" 
+                                            Command="{Binding CheckForUpdatesCommand}" 
+                                            Padding="12,6" 
+                                            Margin="0,0,12,0"/>
+                                    <TextBlock Text="{Binding UpdateStatusText}" 
+                                               Foreground="{DynamicResource TextMutedForeground}" 
+                                               VerticalAlignment="Center" 
+                                               FontSize="12"/>
+                                </StackPanel>
 
                                 <Border BorderBrush="#334155" BorderThickness="0,1,0,0" Padding="0,16,0,0" Width="300">
                                     <TextBlock Text="Licensed under the MIT License." Foreground="{DynamicResource TextMutedForeground}" FontSize="12" HorizontalAlignment="Center"/>
