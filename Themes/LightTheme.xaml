@@ -3,9 +3,9 @@
     <SolidColorBrush x:Key="PrimaryBackground" Color="#F1F5F9"/>
     <SolidColorBrush x:Key="SidebarBackground" Color="#E2E8F0"/>
     <SolidColorBrush x:Key="CardBackground" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="InputBackground" Color="#F8FAFC"/>
-    <SolidColorBrush x:Key="AccentBrush" Color="#2563EB"/>
-    <SolidColorBrush x:Key="AccentHoverBrush" Color="#1D4ED8"/>
+    <SolidColorBrush x:Key="InputBackground" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="AccentBrush" Color="#00897B"/>
+    <SolidColorBrush x:Key="AccentHoverBrush" Color="#00695C"/>
     <SolidColorBrush x:Key="TextForeground" Color="#0F172A"/>
     <SolidColorBrush x:Key="TextMutedForeground" Color="#64748B"/>
     <SolidColorBrush x:Key="BorderBrushColor" Color="#CBD5E1"/>
